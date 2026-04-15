@@ -1,0 +1,36 @@
+▲ Next.js 16.2.3 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 41s
+  Running TypeScript ...
+  Finished TypeScript in 18.3s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/13) ...
+  Generating static pages using 3 workers (3/13) 
+  Generating static pages using 3 workers (6/13) 
+  Generating static pages using 3 workers (9/13) 
+✓ Generating static pages using 3 workers (13/13) in 949ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/agents
+├ ƒ /api/deploy
+├ ƒ /api/deploy/self-host
+├ ƒ /api/huddle
+├ ƒ /api/liveblocks
+├ ƒ /api/video/analyze
+├ ƒ /api/video/upload
+├ ƒ /api/voice/transcribe
+├ ƒ /builder/[id]
+├ ○ /dashboard
+├ ƒ /sign-in/[[...sign-in]]
+└ ƒ /sign-up/[[...sign-up]]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

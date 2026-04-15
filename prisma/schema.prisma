@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  clerkId       String   @unique
+  email         String   @unique
+  name          String?
+  avatarUrl     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  projects          Project[]
+  memberships       OrgMembership[]
+  collaborations    CollaborationMember[]
+  videoAssets       VideoAsset[]
+  deploymentLogs    DeploymentLog[]
+}
+
+model Organization {
+  id          String   @id @default(cuid())
+  clerkOrgId  String   @unique
+  name        String
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+
+  projects    Project[]
+  members     OrgMembership[]
+}
+
+model OrgMembership {
+  id     String @id @default(cuid())
+  userId String
+  orgId  String
+  role   String @default("member")
+
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, orgId])
+}
+
+enum ProjectStatus {
+  DRAFT
+  BUILDING
+  READY
+  DEPLOYING
+  DEPLOYED
+  ERROR
+}
+
+model Project {
+  id             String        @id @default(cuid())
+  ownerId        String
+  orgId          String?
+  name           String
+  slug           String        @unique
+  description    String?
+  status         ProjectStatus @default(DRAFT)
+  framework      String        @default("nextjs")
+  designTokens   Json?
+  motionSpecs    Json?
+  liveblocksRoom String?       @unique
+  previewUrl     String?
+  repoUrl        String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  org          Organization?  @relation(fields: [orgId], references: [id])
+  files        ProjectFile[]
+  versions     ProjectVersion[]
+  rooms        CollaborationRoom[]
+  deployments  DeploymentLog[]
+  videos       VideoAsset[]
+  agentRuns    AgentRun[]
+}
+
+model ProjectFile {
+  id        String   @id @default(cuid())
+  projectId String
+  path      String
+  content   String   @db.Text
+  language  String   @default("typescript")
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, path])
+}
+
+model ProjectVersion {
+  id        String   @id @default(cuid())
+  projectId String
+  label     String
+  snapshot  Json
+  createdBy String
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model CollaborationRoom {
+  id              String   @id @default(cuid())
+  projectId       String
+  liveblocksRoom  String   @unique
+  createdAt       DateTime @default(now())
+
+  project Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  members CollaborationMember[]
+}
+
+model CollaborationMember {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  role      String   @default("editor")
+  joinedAt  DateTime @default(now())
+
+  room CollaborationRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+}
+
+enum VideoAnalysisStatus {
+  PENDING
+  TRANSCRIBING
+  ANALYZING
+  COMPLETE
+  FAILED
+}
+
+model VideoAsset {
+  id              String              @id @default(cuid())
+  projectId       String
+  uploaderId      String
+  url             String
+  durationMs      Int?
+  transcription   String?             @db.Text
+  frameAnalysis   Json?
+  interactions    Json?
+  motionSpec      Json?
+  status          VideoAnalysisStatus @default(PENDING)
+  createdAt       DateTime            @default(now())
+
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploader User    @relation(fields: [uploaderId], references: [id])
+}
+
+enum DeployTarget {
+  VERCEL
+  NETLIFY
+  CLOUDFLARE
+  DOCKER
+  SELF_HOST
+}
+
+enum DeployStatus {
+  QUEUED
+  BUILDING
+  DEPLOYING
+  LIVE
+  FAILED
+  ROLLED_BACK
+}
+
+model DeploymentLog {
+  id         String       @id @default(cuid())
+  projectId  String
+  userId     String
+  target     DeployTarget
+  status     DeployStatus @default(QUEUED)
+  repoUrl    String?
+  liveUrl    String?
+  previewUrl String?
+  logs       Json?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model AgentRun {
+  id        String   @id @default(cuid())
+  projectId String
+  agent     String
+  input     Json
+  output    Json?
+  status    String   @default("running")
+  tokens    Int      @default(0)
+  createdAt DateTime @default(now())
+  endedAt   DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
