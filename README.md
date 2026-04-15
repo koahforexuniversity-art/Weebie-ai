@@ -33,6 +33,14 @@ tokens, committing code, and shipping live URLs.
 ```bash
 npm install
 cp .env.example .env            # fill every key — see table below
+
+# Option A — local Postgres via Docker (recommended for dev)
+docker compose up -d postgres
+# DATABASE_URL=postgresql://forgeagent:forgeagent@localhost:5432/forgeagent
+# DIRECT_URL=postgresql://forgeagent:forgeagent@localhost:5432/forgeagent
+
+# Option B — Supabase / Neon: paste their connection strings into .env
+
 npx prisma generate
 npx prisma migrate dev --name init
 npm run dev

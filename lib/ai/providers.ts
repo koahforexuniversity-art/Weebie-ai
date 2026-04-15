@@ -7,13 +7,13 @@ import { google } from "@ai-sdk/google";
  * can be re-routed (fallback, cost tier, region) in one place.
  */
 export const models = {
-  orchestrator: anthropic("claude-opus-4-6"),
-  reasoner: anthropic("claude-opus-4-6"),
-  coder: anthropic("claude-sonnet-4-6"),
+  orchestrator: anthropic("claude-opus-4-5"),
+  reasoner: anthropic("claude-opus-4-5"),
+  coder: anthropic("claude-sonnet-4-5"),
   fast: anthropic("claude-haiku-4-5-20251001"),
-  vision: google("gemini-3.1-pro"),
-  video: google("gemini-3.1-pro"),
-  fallback: openai("gpt-5.1"),
+  vision: google("gemini-2.5-pro"),
+  video: google("gemini-2.5-pro"),
+  fallback: openai("gpt-4o"),
 } as const;
 
 export type ModelKey = keyof typeof models;
