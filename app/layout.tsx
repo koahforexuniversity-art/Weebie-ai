@@ -21,26 +21,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider
-      appearance={{
-        variables: {
-          colorPrimary: "#a855f7",
-          colorBackground: "#05060a",
-          colorText: "#e5e7eb",
-          colorInputBackground: "#0b0d14",
-        },
-      }}
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <html
-        lang="en"
-        suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      >
-        <body className="min-h-full bg-[#05060a] text-slate-100 selection:bg-fuchsia-500/30 selection:text-white">
+      <body className="min-h-full bg-[#05060a] text-slate-100 selection:bg-fuchsia-500/30 selection:text-white">
+        <ClerkProvider
+          appearance={{
+            variables: {
+              colorPrimary: "#a855f7",
+              colorBackground: "#05060a",
+              colorText: "#e5e7eb",
+              colorInputBackground: "#0b0d14",
+            },
+          }}
+        >
           {children}
           <Toaster theme="dark" position="bottom-right" richColors />
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
