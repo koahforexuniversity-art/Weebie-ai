@@ -32,14 +32,33 @@ tokens, committing code, and shipping live URLs.
 
 ```bash
 npm install
-cp .env.example .env.local
-# fill in Clerk, Supabase, Liveblocks, Anthropic, GitHub, Vercel keys
+cp .env.example .env            # fill every key — see table below
 npx prisma generate
 npx prisma migrate dev --name init
 npm run dev
 ```
 
 Open http://localhost:3000.
+
+### Required environment keys
+
+| Key | Where to get it | Required for |
+| --- | --- | --- |
+| `DATABASE_URL` / `DIRECT_URL` | Supabase / Neon Postgres connection strings | Prisma, all persisted state |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` / `CLERK_SECRET_KEY` | [dashboard.clerk.com](https://dashboard.clerk.com) → API Keys | Auth, org membership |
+| `LIVEBLOCKS_SECRET_KEY` | [liveblocks.io/dashboard](https://liveblocks.io/dashboard) → API Keys | Realtime presence + Yjs |
+| `NEXT_PUBLIC_SUPABASE_URL` / `..._ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` | Supabase project settings | Video / image asset storage |
+| `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) | Orchestrator, coder, huddle agents |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | [aistudio.google.com](https://aistudio.google.com/apikey) | Video intelligence, vision |
+| `OPENAI_API_KEY` | [platform.openai.com](https://platform.openai.com/api-keys) | Whisper transcription, fallback |
+| `VERCEL_TOKEN` (+ `VERCEL_TEAM_ID`) | [vercel.com/account/tokens](https://vercel.com/account/tokens) | Cloud deploy to Vercel |
+| `NETLIFY_TOKEN` | Netlify → User settings → Personal access tokens | Cloud deploy to Netlify |
+| `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` | Cloudflare → My Profile → API Tokens | Cloud deploy to Pages |
+| `GITHUB_OAUTH_TOKEN` | GitHub → Settings → Developer settings → Personal access tokens (repo scope) | Repo + commit automation |
+
+> **Model IDs note** — `lib/ai/providers.ts` references forward-looking IDs
+> (`claude-opus-4-6`, `gemini-3.1-pro`). Swap to the latest available on your
+> account if these error at runtime.
 
 ---
 
@@ -80,15 +99,16 @@ forgeagent-v4/
 
 ## Milestone status
 
-- **M1 · Scaffold + landing** ✅ *this commit* — deps installed, Clerk +
-  Liveblocks + AI SDK + GitHub + Vercel wired, immersive landing page with
-  aurora hero, agent swarm grid, deployment log showcase, production build green.
-- **M2 · Builder core** — Liveblocks RoomProvider, Yjs-Monaco split pane, live
-  preview, holographic Control Room with presence.
-- **M3 · Multi-modal input** — video record/upload, AI SDK v6 multimodal
-  streams, Video Intelligence Agent end-to-end.
-- **M4 · Deployment swarm** — live GitHub repo creation, Vercel streaming build
-  logs, rollback, one-click Docker self-host bundle.
+- **M1 · Scaffold + landing** ✅ — deps, Clerk + Liveblocks + AI SDK wired,
+  aurora landing, swarm grid, green build.
+- **M2 · Builder core** ✅ — Liveblocks RoomProvider, Yjs-Monaco split pane,
+  live preview, holographic Control Room with presence.
+- **M3 · Multi-modal input** ✅ — video record/upload, AI SDK v6 multimodal
+  streams, Video Intelligence Agent (frames + motion specs).
+- **M4 · Deployment swarm** ✅ — GitHub repo creation, Vercel / Netlify /
+  Cloudflare Pages streaming deploys, Docker self-host zip.
+- **Polish** ✅ — Agent Huddle voice layer (Web Speech), SwarmParticles canvas,
+  LCS-based version history with visual diff.
 
 ---
 
